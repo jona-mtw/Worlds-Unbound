@@ -8,7 +8,7 @@ var timer := Timer.new()
 func _ready() -> void:
 	add_child(timer)
 	timer.connect("timeout", Callable(self, "snap"))
-	timer.set_wait_time(1)
+	timer.set_wait_time(0.25)
 	snap()
 
 func snap() -> void:

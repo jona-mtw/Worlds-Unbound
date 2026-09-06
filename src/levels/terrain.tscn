@@ -1,6 +1,6 @@
 [gd_scene load_steps=8 format=3 uid="uid://cg0c6v6n7pwoo"]
 
-[ext_resource type="ArrayMesh" uid="uid://hyp5fwok74op" path="res://assets/art/glb/environments/clipmap.res" id="1_shqj6"]
+[ext_resource type="ArrayMesh" uid="uid://b0mhpcaj1txxb" path="res://assets/art/imported_models/environments/clipmap.res" id="1_shqj6"]
 [ext_resource type="Shader" uid="uid://ce8cxq1urr7bm" path="res://src/shaders/terrain.tres" id="2_kvj0e"]
 [ext_resource type="Script" uid="uid://7wobx80bhcka" path="res://src/levels/terrain.gd" id="3_uevfd"]
 
@@ -28,7 +28,7 @@ shader = ExtResource("2_kvj0e")
 shader_parameter/u = 0.0
 shader_parameter/v = 0.0
 shader_parameter/heightmap = SubResource("NoiseTexture2D_uevfd")
-shader_parameter/height = 2000.0
+shader_parameter/height = 2000
 shader_parameter/normalmap = SubResource("NoiseTexture2D_be0su")
 shader_parameter/u_terrain_normal_basis = Basis(1.735, -0.07, -0.065, 0.165, 0.285, 0.31, 0.195, 0.15, 1.12)
 
