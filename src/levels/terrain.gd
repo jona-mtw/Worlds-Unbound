@@ -1,6 +1,6 @@
 extends MeshInstance3D
 
-@onready var player: CharacterBody3D = $"../../EntityRoot/Player"
+@onready var player: CharacterBody3D = $"../../../EntityRoot/Player"
 var snap_step := 20
 var player_pos: Vector3
 var timer := Timer.new()
@@ -18,6 +18,4 @@ func snap() -> void:
 	global_transform.origin.z = player_pos.z
 	get_surface_override_material(0).set_shader_parameter("u", player_pos.x / div)
 	get_surface_override_material(0).set_shader_parameter("v", player_pos.z / div)
-	print("u:", player_pos.x / div)
-	print("v:", player_pos.z / div, "\n")
 	timer.start()
