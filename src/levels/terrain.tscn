@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://dip3tnwjbxgg6" path="res://src/levels/terrain_collisions.gd" id="4_uevfd"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_kvj0e"]
-frequency = 0.0017
+frequency = 0.0015
 fractal_type = 2
 fractal_weighted_strength = 0.7
 
@@ -52,4 +52,5 @@ script = ExtResource("4_uevfd")
 [node name="StaticBody3D" type="StaticBody3D" parent="TerrainCollisions"]
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="TerrainCollisions/StaticBody3D"]
+rotation_edit_mode = 1
 shape = SubResource("HeightMapShape3D_kvj0e")
