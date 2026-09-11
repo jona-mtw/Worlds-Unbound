@@ -127,4 +127,4 @@ exit={
 
 [physics]
 
-3d/default_gravity=9.799999999999995
+3d/default_gravity=50.0
