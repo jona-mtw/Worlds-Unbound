@@ -19,7 +19,6 @@ config/icon="res://icon.svg"
 [autoload]
 
 EventListener="*res://src/core/autoload/event_listener.gd"
-LOD="*res://src/levels/lod.gd"
 
 [debug]
 
@@ -128,4 +127,4 @@ exit={
 
 [physics]
 
-3d/default_gravity=9.799999999999995
+3d/default_gravity=50.0

@@ -1,13 +1,51 @@
-[gd_scene load_steps=2 format=3 uid="uid://kvjhsaqnruys"]
+[gd_scene load_steps=10 format=3 uid="uid://cg0c6v6n7pwoo"]
 
-[ext_resource type="Script" uid="uid://oww7n3u8j8hv" path="res://src/levels/terrain_generation.gd" id="1_o3ck0"]
+[ext_resource type="ArrayMesh" uid="uid://b0mhpcaj1txxb" path="res://assets/art/imported_models/environments/clipmap.res" id="1_shqj6"]
+[ext_resource type="Shader" uid="uid://ce8cxq1urr7bm" path="res://src/shaders/terrain.tres" id="2_kvj0e"]
+[ext_resource type="Script" uid="uid://7wobx80bhcka" path="res://src/levels/terrain.gd" id="3_uevfd"]
+[ext_resource type="Script" uid="uid://dip3tnwjbxgg6" path="res://src/levels/terrain_collisions.gd" id="4_uevfd"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_kvj0e"]
+frequency = 0.0015
+fractal_type = 2
+fractal_weighted_strength = 0.7
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_uevfd"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_kvj0e")
+seamless = true
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_be0su"]
+width = 1024
+height = 1024
+noise = SubResource("FastNoiseLite_kvj0e")
+seamless = true
+as_normal_map = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_be0su"]
+render_priority = 0
+shader = ExtResource("2_kvj0e")
+shader_parameter/u = 0.0
+shader_parameter/v = 0.0
+shader_parameter/heightmap = SubResource("NoiseTexture2D_uevfd")
+shader_parameter/height = 2000
+shader_parameter/normalmap = SubResource("NoiseTexture2D_be0su")
+shader_parameter/u_terrain_normal_basis = Basis(1.735, -0.07, -0.065, 0.165, 0.285, 0.31, 0.195, 0.15, 1.12)
+
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_uevfd"]
 
 [node name="Terrain" type="Node3D"]
-script = ExtResource("1_o3ck0")
-terrain_seed = 2870224546
-freq = 0.011
-persistence = 0.1
-lacunarity = 5.0
-resolution = 1.0
 
-[node name="ChunkBorders" type="Node3D" parent="."]
+[node name="Mesh" type="MeshInstance3D" parent="."]
+mesh = ExtResource("1_shqj6")
+surface_material_override/0 = SubResource("ShaderMaterial_be0su")
+script = ExtResource("3_uevfd")
+
+[node name="TerrainCollisions" type="Node3D" parent="."]
+script = ExtResource("4_uevfd")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="TerrainCollisions"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="TerrainCollisions/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_uevfd")

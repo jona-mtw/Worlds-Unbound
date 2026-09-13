@@ -5,9 +5,9 @@ const JUMP_VELOCITY: float = 4.5
 @onready var animation_player = $player_model/AnimationPlayer
 
 
-func _physics_process(_delta: float) -> void:
-	# if not is_on_floor():
-	# 	velocity += get_gravity() * delta
+func _physics_process(delta: float) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * delta
 	if Input.is_action_pressed("jump") and is_on_floor():
 		velocity.y = JUMP_VELOCITY
 

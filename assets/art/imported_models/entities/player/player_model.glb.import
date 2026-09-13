@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bq58opwhf7m16"
-path="res://.godot/imported/player.glb-c809a003e0b00c3f7c5ce742b9abaeff.scn"
+uid="uid://36pdvnv2d7ue"
+path="res://.godot/imported/player_model.glb-a6dec8bce9366f3bc1e7f68b097f88f6.scn"
 
 [deps]
 
-source_file="res://assets/art/glb/entities/player/player.glb"
-dest_files=["res://.godot/imported/player.glb-c809a003e0b00c3f7c5ce742b9abaeff.scn"]
+source_file="res://assets/art/imported_models/entities/player/player_model.glb"
+dest_files=["res://.godot/imported/player_model.glb-a6dec8bce9366f3bc1e7f68b097f88f6.scn"]
 
 [params]
 
@@ -22,7 +22,7 @@ nodes/import_as_skeleton_bones=false
 nodes/use_name_suffixes=true
 nodes/use_node_type_suffixes=true
 meshes/ensure_tangents=true
-meshes/generate_lods=false
+meshes/generate_lods=true
 meshes/create_shadow_meshes=true
 meshes/light_baking=1
 meshes/lightmap_texel_size=0.2
