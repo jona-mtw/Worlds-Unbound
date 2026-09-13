@@ -31,6 +31,8 @@ shader_parameter/v = 0.0
 shader_parameter/heightmap = SubResource("NoiseTexture2D_uevfd")
 shader_parameter/height = 2000
 shader_parameter/normalmap = SubResource("NoiseTexture2D_be0su")
+shader_parameter/colour = Color(0.7335836, 0.6297446, 0.5839002, 1)
+shader_parameter/frag_color = Color(0.73333335, 0.6313726, 0.58431375, 1)
 shader_parameter/u_terrain_normal_basis = Basis(1.735, -0.07, -0.065, 0.165, 0.285, 0.31, 0.195, 0.15, 1.12)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_uevfd"]

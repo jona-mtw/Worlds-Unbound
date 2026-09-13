@@ -1,4 +1,11 @@
-[gd_resource type="VisualShader" load_steps=19 format=3 uid="uid://ce8cxq1urr7bm"]
+[gd_resource type="VisualShader" load_steps=23 format=3 uid="uid://ce8cxq1urr7bm"]
+
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_ltapg"]
+output_port_for_preview = 0
+expanded_output_ports = [0]
+parameter_name = "frag_color"
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_0uhy8"]
 
 [sub_resource type="VisualShaderNodeTexture2DParameter" id="VisualShaderNodeTexture2DParameter_6v87e"]
 parameter_name = "heightmap"
@@ -45,6 +52,13 @@ expression = "NORMAL = u_terrain_normal_basis * unpack_normalmap(texture(u_terra
 [sub_resource type="VisualShaderNodeTexture" id="VisualShaderNodeTexture_6v87e"]
 source = 5
 
+[sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_6v87e"]
+output_port_for_preview = 0
+expanded_output_ports = [0]
+parameter_name = "colour"
+
+[sub_resource type="VisualShaderNodeVectorCompose" id="VisualShaderNodeVectorCompose_ltapg"]
+
 [sub_resource type="VisualShaderNodeVectorDecompose" id="VisualShaderNodeVectorDecompose_ltapg"]
 
 [sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_edk80"]
@@ -72,6 +86,8 @@ uniform float v;
 uniform sampler2D heightmap;
 uniform int height;
 uniform sampler2D normalmap;
+uniform vec4 colour : source_color;
+uniform vec4 frag_color : source_color;
 
 
 // GlobalExpression:0
@@ -150,9 +166,39 @@ void vertex() {
 	}
 
 
+// ColorParameter:22
+	vec4 n_out22p0 = colour;
+	float n_out22p1 = n_out22p0.r;
+	float n_out22p2 = n_out22p0.g;
+	float n_out22p3 = n_out22p0.b;
+
+
+// VectorCompose:23
+	vec3 n_out23p0 = vec3(n_out22p1, n_out22p2, n_out22p3);
+
+
 // Output:0
 	VERTEX = n_out15p0;
 	NORMAL = n_out20p0;
+	COLOR.rgb = n_out23p0;
+
+
+}
+
+void fragment() {
+// ColorParameter:2
+	vec4 n_out2p0 = frag_color;
+	float n_out2p1 = n_out2p0.r;
+	float n_out2p2 = n_out2p0.g;
+	float n_out2p3 = n_out2p0.b;
+
+
+// VectorCompose:3
+	vec3 n_out3p0 = vec3(n_out2p1, n_out2p2, n_out2p3);
+
+
+// Output:0
+	ALBEDO = n_out3p0;
 
 
 }
@@ -208,4 +254,13 @@ nodes/vertex/20/output_ports = "0,4,NORMAL;"
 nodes/vertex/20/expression = "NORMAL = u_terrain_normal_basis * unpack_normalmap(texture(u_terrain_normalmap, offsetUVs));"
 nodes/vertex/21/node = SubResource("VisualShaderNodeTexture_6v87e")
 nodes/vertex/21/position = Vector2(-100, 1060)
-nodes/vertex/connections = PackedInt32Array(10, 0, 11, 2, 12, 0, 13, 1, 14, 0, 15, 1, 13, 0, 15, 0, 15, 0, 0, 0, 11, 0, 13, 0, 4, 0, 3, 0, 8, 0, 11, 0, 3, 1, 7, 0, 7, 0, 8, 1, 3, 0, 6, 0, 6, 0, 8, 0, 5, 0, 7, 1, 2, 0, 6, 1, 16, 0, 20, 1, 8, 0, 20, 0, 16, 0, 21, 2, 20, 0, 0, 1, 19, 0, 12, 1)
+nodes/vertex/22/node = SubResource("VisualShaderNodeColorParameter_6v87e")
+nodes/vertex/22/position = Vector2(360, 900)
+nodes/vertex/23/node = SubResource("VisualShaderNodeVectorCompose_ltapg")
+nodes/vertex/23/position = Vector2(620, 980)
+nodes/vertex/connections = PackedInt32Array(10, 0, 11, 2, 12, 0, 13, 1, 14, 0, 15, 1, 13, 0, 15, 0, 15, 0, 0, 0, 11, 0, 13, 0, 4, 0, 3, 0, 8, 0, 11, 0, 3, 1, 7, 0, 7, 0, 8, 1, 3, 0, 6, 0, 6, 0, 8, 0, 5, 0, 7, 1, 2, 0, 6, 1, 16, 0, 20, 1, 8, 0, 20, 0, 16, 0, 21, 2, 20, 0, 0, 1, 19, 0, 12, 1, 22, 1, 23, 0, 22, 2, 23, 1, 22, 3, 23, 2, 23, 0, 0, 6)
+nodes/fragment/2/node = SubResource("VisualShaderNodeColorParameter_ltapg")
+nodes/fragment/2/position = Vector2(-140, 180)
+nodes/fragment/3/node = SubResource("VisualShaderNodeVectorCompose_0uhy8")
+nodes/fragment/3/position = Vector2(140, 260)
+nodes/fragment/connections = PackedInt32Array(2, 1, 3, 0, 2, 2, 3, 1, 2, 3, 3, 2, 3, 0, 0, 0)
