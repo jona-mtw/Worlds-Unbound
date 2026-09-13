@@ -5,8 +5,8 @@
 [ext_resource type="PackedScene" uid="uid://36pdvnv2d7ue" path="res://assets/art/imported_models/entities/player/player_model.glb" id="3_k2146"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_64h4j"]
-radius = 0.3232422
-height = 2.4581866
+radius = 0.3383789
+height = 2.6114175
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_kh5p4"]
 radius = 0.2
@@ -16,7 +16,7 @@ collision_layer = 2
 script = ExtResource("1_64h4j")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(0.9993537, 0, 0.035946038, 0, 1, 0, -0.035946038, 0, 0.9993537, 0, 1.2318119, 0)
+transform = Transform3D(0.9993537, 0, 0.035946038, 0, 1, 0, -0.035946038, 0, 0.9993537, 0, 1.3084273, 0)
 shape = SubResource("CapsuleShape3D_64h4j")
 
 [node name="CameraPivot" type="SpringArm3D" parent="."]
@@ -30,7 +30,7 @@ script = ExtResource("2_k2146")
 near = 0.001
 
 [node name="player_model" parent="." instance=ExtResource("3_k2146")]
-transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+transform = Transform3D(-0.4, 0, -6.039832e-08, 0, 0.4, 0, 6.039832e-08, 0, -0.4, 0, 1.2082765, 0)
 
 [node name="Skeleton3D" parent="player_model/Armature" index="0"]
 bones/0/position = Vector3(0.038422734, -1.6786022, -4.51713e-09)
