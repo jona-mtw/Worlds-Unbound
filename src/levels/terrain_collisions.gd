@@ -1,8 +1,8 @@
+@tool
 extends Node3D
 
 @export var collision_size := 200.0
 
-@onready var player: CharacterBody3D = $"../../../EntityRoot/Player"
 
 @onready var mesh: MeshInstance3D = $"../Mesh"
 @onready var material := mesh.get_surface_override_material(0) as ShaderMaterial
@@ -16,10 +16,13 @@ var base_vertices: PackedVector3Array
 var base_uvs: PackedVector2Array
 var mesh_indices: PackedInt32Array
 var collision_indices: PackedInt32Array
+var player: CharacterBody3D
+
 
 @onready var collision: CollisionShape3D = $StaticBody3D/CollisionShape3D
 
 func _ready():
+	player = $"../../../EntityRoot/Player"
 	while material.get_shader_parameter("heightmap") == null:
 		await get_tree().process_frame
 	heightmap_tex = material.get_shader_parameter("heightmap") as NoiseTexture2D
