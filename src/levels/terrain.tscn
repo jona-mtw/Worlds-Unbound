@@ -1,7 +1,8 @@
-[gd_scene load_steps=10 format=3 uid="uid://cg0c6v6n7pwoo"]
+[gd_scene load_steps=11 format=3 uid="uid://cg0c6v6n7pwoo"]
 
 [ext_resource type="ArrayMesh" uid="uid://b0mhpcaj1txxb" path="res://assets/art/imported_models/environments/clipmap.res" id="1_shqj6"]
 [ext_resource type="Shader" uid="uid://ce8cxq1urr7bm" path="res://src/shaders/terrain.tres" id="2_kvj0e"]
+[ext_resource type="Texture2D" uid="uid://c8bsrka7gu6qr" path="res://assets/art/pbr_textures/grass_texture/Poliigon_GrassPatchyGround_4585_BaseColor.jpg" id="3_be0su"]
 [ext_resource type="Script" uid="uid://7wobx80bhcka" path="res://src/levels/terrain.gd" id="3_uevfd"]
 [ext_resource type="Script" uid="uid://dip3tnwjbxgg6" path="res://src/levels/terrain_collisions.gd" id="4_uevfd"]
 
@@ -32,7 +33,7 @@ shader_parameter/heightmap = SubResource("NoiseTexture2D_uevfd")
 shader_parameter/height = 2000
 shader_parameter/normalmap = SubResource("NoiseTexture2D_be0su")
 shader_parameter/colour = Color(0.73, 0.55115, 0.4745, 1)
-shader_parameter/frag_color = Color(0.7294118, 0.5529412, 0.4745098, 1)
+shader_parameter/grass_texture = ExtResource("3_be0su")
 shader_parameter/u_terrain_normal_basis = Basis(1.735, -0.07, -0.065, 0.165, 0.285, 0.31, 0.195, 0.15, 1.12)
 
 [sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_uevfd"]

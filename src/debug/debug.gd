@@ -3,7 +3,7 @@ extends Control
 class_name Debug
 
 @onready var vp := get_viewport()
-@onready var player: CharacterBody3D = $"../../World/EntityRoot/Player"
+@onready var player: CharacterBody3D = $"../../../World/EntityRoot/Player"
 
 var stats
 func _ready() -> void:

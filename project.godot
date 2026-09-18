@@ -11,14 +11,15 @@ config_version=5
 [application]
 
 config/name="Celestial"
-run/main_scene="uid://cpd8mby2cspyb"
+run/main_scene="uid://dykimnfp04xn8"
 config/features=PackedStringArray("4.5", "Forward Plus")
 run/max_fps=240
 config/icon="res://icon.svg"
 
 [autoload]
 
-EventListener="*res://src/core/autoload/event_listener.gd"
+EventListener="*res://src/core/managers/event_listener.gd"
+UiManager="*res://src/core/managers/ui_manager.gd"
 
 [debug]
 
@@ -127,4 +128,4 @@ exit={
 
 [physics]
 
-3d/default_gravity=50.0
+3d/default_gravity=9.799999999999995

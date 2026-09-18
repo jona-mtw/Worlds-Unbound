@@ -1,8 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://dmqh1a0jy1fwr"]
+[gd_scene load_steps=3 format=3 uid="uid://dmqh1a0jy1fwr"]
 
 [ext_resource type="Script" uid="uid://c1rx7etgeg4ha" path="res://src/ui/pause_menu/pause_menu.gd" id="1_u4p1g"]
 [ext_resource type="Theme" uid="uid://bsm4qh1o5r875" path="res://src/ui/theme/global_theme.tres" id="3_j7lcx"]
-[ext_resource type="PackedScene" uid="uid://d0s51w4dkd70s" path="res://src/ui/settings_menu/settings_menu.tscn" id="3_kqx3l"]
 
 [node name="PauseMenu" type="Control"]
 layout_mode = 3
@@ -102,18 +101,7 @@ theme = ExtResource("3_j7lcx")
 text = "QUIT
 "
 
-[node name="SettingsMenu" parent="." instance=ExtResource("3_kqx3l")]
-visible = false
-layout_mode = 1
-anchor_left = 0.5
-anchor_top = 0.57900006
-anchor_right = 0.5
-anchor_bottom = 0.57900006
-offset_left = -960.0
-offset_top = -625.32007
-offset_right = -960.0
-offset_bottom = -625.32007
-
 [connection signal="pressed" from="PauseColumn/ResumeButton" to="." method="_on_resume_button_pressed"]
 [connection signal="pressed" from="PauseColumn/SettingsButton" to="." method="_on_settings_button_pressed"]
+[connection signal="pressed" from="PauseColumn/MainMenuButton" to="." method="_on_main_menu_button_pressed"]
 [connection signal="pressed" from="PauseColumn/QuitButton" to="." method="_on_quit_button_pressed"]
