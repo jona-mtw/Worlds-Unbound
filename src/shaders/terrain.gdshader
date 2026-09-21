@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
 
-//#region uniforms
+//#region Uniforms
 group_uniforms TerrainGen;
 uniform float u;
 uniform float v;
@@ -11,7 +11,7 @@ uniform sampler2D normalmap;
 uniform vec4 colour : source_color;
 group_uniforms;
 
-//#region Textures
+//#region Texture Uniforms
 group_uniforms Textures;
 
 //#region GrassTexture
@@ -78,7 +78,7 @@ void vertex() {
 }
 
 void fragment() {
-	//#region Textures
+	//#region Frag Texture Vars
 	vec3 grass_texture_ao = texture(grass_image_ao, UV).rgb;
 	vec3 grass_texture_colour = texture(grass_image_colour, UV).rgb;
 	vec3 grass_texture_normal = texture(grass_image_normal, UV).rgb;
