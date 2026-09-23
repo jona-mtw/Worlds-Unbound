@@ -1,14 +1,27 @@
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
 
+#define FNL_COMPILER_OPTIMSATIONS_REQUIRED
+#define SELECTED_NOISE_TYPE FNL_NOISE_OPENSIMPLEX2S
+#define SELECTED_FRACTAL_TYPE FNL_FRACTAL_FBM
+#include "res://addons/FastNoiseLiteRuntimeShader/FastNoiseLiteLib.gdshaderinc"
+
 //#region Uniforms
+group_uniforms NoiseSettings;
+uniform int seed;
+uniform float frequency;
+uniform int fractal_octaves;
+uniform float fractal_lacunarity;
+uniform float fractal_gain;
+uniform float fractal_weighted_strength;
+uniform float delta;
+group_uniforms;
+
 group_uniforms TerrainGen;
 uniform float u;
 uniform float v;
-uniform sampler2D heightmap;
 uniform int height;
-uniform sampler2D normalmap;
-uniform vec4 colour : source_color;
+uniform float shadow_basis = 0.1;
 group_uniforms;
 
 //#region Texture Uniforms
@@ -60,21 +73,44 @@ group_uniforms;
 uniform mat3 terrain_normal_basis;
 //#endregion
 
-vec3 unpack_normalmap(vec4 rgba){
-	vec3 n = rgba.xzy * 2.0 - vec3(1.0);
-	n.z *= 1.0;
-	return n;
-}
+varying vec2 world_pos;
 
 void vertex() {
-	float heightmap_u = vec3(UV, 0.0).x + u;
-	float heightmap_v = vec3(UV, 0.0).y + v;
+    fnl_state noise = fnlCreateState(seed);
+    noise.frequency = frequency / 1000.0;
+    noise.fractal_type = SELECTED_FRACTAL_TYPE;
+    noise.octaves = fractal_octaves;
+    noise.lacunarity = fractal_lacunarity;
+    noise.gain = fractal_gain;
+    noise.weighted_strength = fractal_weighted_strength;
 
-	vec3 heightmap_texture = texture(heightmap, vec2(heightmap_u, heightmap_v)).rgb;
-	vec3 vertex_offset = vec3(heightmap_texture.xyz) * vec3(0.0, float(height), 0.0);
+    vec2 chunk_offset = vec2(u, v) * 1000.0;
+    vec2 current_pos = VERTEX.xz + chunk_offset;
 
-	VERTEX += vertex_offset;
-	NORMAL = terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v)));
+	world_pos = current_pos; 
+
+    float noise_value = fnlGetNoise2D(noise, current_pos.x, current_pos.y);
+    VERTEX.y += noise_value * float(height);
+
+    // float height_left  = fnlGetNoise2D(noise, current_pos.x - delta, current_pos.y) * float(height);
+    // float height_right = fnlGetNoise2D(noise, current_pos.x + delta, current_pos.y) * float(height);
+    // float height_down  = fnlGetNoise2D(noise, current_pos.x, current_pos.y - delta) * float(height);
+    // float height_up    = fnlGetNoise2D(noise, current_pos.x, current_pos.y + delta) * float(height);
+
+    // vec3 pos_left  = vec3(-delta, height_left,  0.0);
+    // vec3 pos_right = vec3(delta,  height_right, 0.0);
+    // vec3 pos_down  = vec3(0.0,    height_down,  -delta);
+    // vec3 pos_up    = vec3(0.0,    height_up,    delta);
+
+    // vec3 clean_tangent  = pos_right - pos_left;
+    // vec3 clean_binormal = pos_up - pos_down;
+
+    // vec3 calculated_normal = cross(clean_binormal, clean_tangent);
+
+    // NORMAL  = normalize(calculated_normal);
+    // TANGENT = normalize(clean_tangent);
+    // BINORMAL = normalize(clean_binormal);
+
 }
 
 void fragment() {
@@ -104,4 +140,27 @@ void fragment() {
 	vec3 snow_texture_normal = texture(snow_image_normal, UV).rgb;
 	vec3 snow_texture_roughness = texture(snow_image_roughness, UV).rgb;
 	//#endregion
+
+	fnl_state noise = fnlCreateState(seed);
+    noise.frequency = frequency / 1000.0;
+    noise.fractal_type = SELECTED_FRACTAL_TYPE;
+    noise.octaves = fractal_octaves;
+    noise.lacunarity = fractal_lacunarity;
+    noise.gain = fractal_gain;
+    noise.weighted_strength = fractal_weighted_strength;
+
+    float h_left  = fnlGetNoise2D(noise, world_pos.x - delta, world_pos.y) * float(height);
+    float h_right = fnlGetNoise2D(noise, world_pos.x + delta, world_pos.y) * float(height);
+    float h_down  = fnlGetNoise2D(noise, world_pos.x, world_pos.y - delta) * float(height);
+    float h_up    = fnlGetNoise2D(noise, world_pos.x, world_pos.y + delta) * float(height);
+    
+	float slope_x = (h_left - h_right) * shadow_basis;
+    float slope_z = (h_down - h_up) * shadow_basis;
+
+    vec3 pixel_normal = normalize(vec3(slope_x, 2.0 * delta, slope_z));
+
+    vec3 packed_normal = (pixel_normal * 0.5) + 0.5;
+
+    ALBEDO = vec3(1.0);
+    NORMAL_MAP = packed_normal;
 }

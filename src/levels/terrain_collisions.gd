@@ -3,113 +3,156 @@ extends Node3D
 
 @export var collision_size := 200.0
 
-
 @onready var mesh: MeshInstance3D = $"../Mesh"
-@onready var material := mesh.get_surface_override_material(0) as ShaderMaterial
-var heightmap_img: Image
-var img_width: int
-var img_depth: int
-var height: float
-var terrain_offset := Vector2.ZERO
+@onready var collision: CollisionShape3D = $StaticBody3D/CollisionShape3D
+
+var material: ShaderMaterial
+
 var base_vertices: PackedVector3Array
-var base_uvs: PackedVector2Array
 var mesh_indices: PackedInt32Array
 var collision_indices: PackedInt32Array
+
+var terrain_offset := Vector2.ZERO
+
+var noise := FastNoiseLite.new()
+
 var player: CharacterBody3D
 
 
-@onready var collision: CollisionShape3D = $StaticBody3D/CollisionShape3D
-
 func _ready():
 	player = $"../../../EntityRoot/Player"
-	while material.get_shader_parameter("heightmap") == null:
-		await get_tree().process_frame
 
-	var heightmap_tex := material.get_shader_parameter("heightmap") as Texture2D
-
-	if heightmap_tex is NoiseTexture2D:
-		var test_img = heightmap_tex.get_image()
-		if test_img == null or test_img.is_empty():
-			await heightmap_tex.changed
-		
-	heightmap_img = heightmap_tex.get_image()
-	img_width = heightmap_img.get_width()
-	img_depth = heightmap_img.get_height()
-	height = float(material.get_shader_parameter("height"))
+	material = mesh.get_surface_override_material(0) as ShaderMaterial
 
 	var mesh_arrays := mesh.mesh.surface_get_arrays(0)
+
 	base_vertices = mesh_arrays[Mesh.ARRAY_VERTEX]
-	base_uvs = mesh_arrays[Mesh.ARRAY_TEX_UV]
 	mesh_indices = mesh_arrays[Mesh.ARRAY_INDEX]
 
 	build_collision_indices()
+
+	setup_noise()
+	update_terrain_offset()
 	update_shape()
+
+
+func _process(_delta):
 	update_terrain_offset()
 
-func _process(delta: float) -> void:
-	var terrain_position := Vector3(mesh.global_position.x, 0.0, mesh.global_position.z)
-	if collision.global_position != terrain_position:
-		collision.global_position = terrain_position
-	update_terrain_offset()
 
-func update_terrain_offset() -> void:
+func setup_noise():
+	noise.seed = int(material.get_shader_parameter("seed"))
+
+	noise.frequency = float(
+		material.get_shader_parameter("frequency")
+	) * 1000.0
+
+	noise.noise_type = FastNoiseLite.TYPE_SIMPLEX_SMOOTH
+	noise.fractal_type = FastNoiseLite.FRACTAL_FBM
+
+	noise.fractal_octaves = int(
+		material.get_shader_parameter("fractal_octaves")
+	)
+
+	noise.fractal_lacunarity = float(
+		material.get_shader_parameter("fractal_lacunarity")
+	)
+
+	noise.fractal_gain = float(
+		material.get_shader_parameter("fractal_gain")
+	)
+
+	noise.fractal_weighted_strength = float(
+		material.get_shader_parameter("fractal_weighted_strength")
+	)
+
+
+func update_terrain_offset():
 	var shader_u := float(material.get_shader_parameter("u"))
 	var shader_v := float(material.get_shader_parameter("v"))
-	var next_offset := Vector2(shader_u, shader_v)
-	if next_offset != terrain_offset:
-		terrain_offset = next_offset
+
+	var new_offset := Vector2(shader_u, shader_v)
+
+	if new_offset != terrain_offset:
+		terrain_offset = new_offset
 		update_shape()
 
+
 func update_shape():
-	var next_faces := PackedVector3Array()
-	next_faces.resize(collision_indices.size())
+	var faces := PackedVector3Array()
+
+	faces.resize(collision_indices.size())
+
+	var terrain_height := int(
+		material.get_shader_parameter("height")
+	)
+
 	for i in collision_indices.size():
 		var vertex_index := collision_indices[i]
 		var vertex := base_vertices[vertex_index]
-		next_faces[i] = Vector3(vertex.x, get_height(base_uvs[vertex_index]), vertex.z)
-	var next_shape := ConcavePolygonShape3D.new()
-	next_shape.set_faces(next_faces)
-	collision.shape = next_shape
 
-func build_collision_indices() -> void:
+		var height_value := get_height(
+			Vector2(vertex.x, vertex.z),
+			terrain_height
+		)
+
+		faces[i] = Vector3(
+			vertex.x,
+			height_value,
+			vertex.z
+		)
+
+	var shape := ConcavePolygonShape3D.new()
+	shape.set_faces(faces)
+
+	collision.shape = shape
+
+
+func get_height(local_pos: Vector2, terrain_height: int) -> float:
+	var current_pos := local_pos + terrain_offset * 1000.0
+
+	var noise_value := noise.get_noise_2d(
+		current_pos.x,
+		current_pos.y
+	)
+
+	return noise_value * float(terrain_height)
+
+
+func build_collision_indices():
 	var half_size := collision_size * 0.5
+
 	var selected_indices := PackedInt32Array()
+
 	for i in range(0, mesh_indices.size(), 3):
 		var first := base_vertices[mesh_indices[i]]
 		var second := base_vertices[mesh_indices[i + 1]]
 		var third := base_vertices[mesh_indices[i + 2]]
+
 		var triangle_min := Vector2(
 			min(first.x, second.x, third.x),
 			min(first.z, second.z, third.z)
 		)
+
 		var triangle_max := Vector2(
 			max(first.x, second.x, third.x),
 			max(first.z, second.z, third.z)
 		)
-		if triangle_max.x < -half_size or triangle_min.x > half_size:
+
+		if triangle_max.x < -half_size:
 			continue
-		if triangle_max.y < -half_size or triangle_min.y > half_size:
+
+		if triangle_min.x > half_size:
 			continue
+
+		if triangle_max.y < -half_size:
+			continue
+
+		if triangle_min.y > half_size:
+			continue
+
 		selected_indices.append(mesh_indices[i])
 		selected_indices.append(mesh_indices[i + 1])
 		selected_indices.append(mesh_indices[i + 2])
+
 	collision_indices = selected_indices
-
-func get_height(uv: Vector2) -> float:
-	var height_uv := uv + terrain_offset
-	height_uv.x = fposmod(height_uv.x, 1.0)
-	height_uv.y = fposmod(height_uv.y, 1.0)
-	var image_x := height_uv.x * img_width - 0.5
-	var image_y := height_uv.y * img_depth - 0.5
-	var x0 := floori(image_x)
-	var y0 := floori(image_y)
-	var x1 := x0 + 1
-	var y1 := y0 + 1
-	var x_blend := image_x - x0
-	var y_blend := image_y - y0
-	var top: float = lerp(get_pixel_height(x0, y0), get_pixel_height(x1, y0), x_blend)
-	var bottom: float = lerp(get_pixel_height(x0, y1), get_pixel_height(x1, y1), x_blend)
-	return lerp(top, bottom, y_blend) * height
-
-func get_pixel_height(x: int, y: int) -> float:
-	return heightmap_img.get_pixel(posmod(x, img_width), posmod(y, img_depth)).g
