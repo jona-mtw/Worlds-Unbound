@@ -74,7 +74,7 @@ void vertex() {
 	vec3 vertex_offset = vec3(heightmap_texture.xyz) * vec3(0.0, float(height), 0.0);
 
 	VERTEX += vertex_offset;
-	NORMAL = terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v)));
+	NORMAL = normalize(terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v))));
 }
 
 void fragment() {
