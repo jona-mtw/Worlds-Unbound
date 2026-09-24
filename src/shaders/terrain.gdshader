@@ -11,6 +11,13 @@ uniform sampler2D normalmap;
 uniform vec4 colour : source_color;
 group_uniforms;
 
+//#region BiomeSettings
+group_uniforms BiomeSettings;
+uniform float grass_height;
+uniform float rock_height;
+uniform float snow_height;
+uniform float biome_blend: hint_range(0.0, 1.0) = 0.5;
+
 //#region Textures
 group_uniforms Textures;
 
@@ -66,6 +73,8 @@ vec3 unpack_normalmap(vec4 rgba){
 	return n;
 }
 
+varying float vert_height;
+
 void vertex() {
 	float heightmap_u = vec3(UV, 0.0).x + u;
 	float heightmap_v = vec3(UV, 0.0).y + v;
@@ -74,15 +83,16 @@ void vertex() {
 	vec3 vertex_offset = vec3(heightmap_texture.xyz) * vec3(0.0, float(height), 0.0);
 
 	VERTEX += vertex_offset;
+	vert_height = VERTEX.y;
 	NORMAL = terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v)));
 }
 
 void fragment() {
 	//#region Textures
-	vec3 grass_texture_ao = texture(grass_image_ao, UV).rgb;
+	float grass_texture_ao = texture(grass_image_ao, UV).r;
 	vec3 grass_texture_colour = texture(grass_image_colour, UV).rgb;
 	vec3 grass_texture_normal = texture(grass_image_normal, UV).rgb;
-	vec3 grass_texture_roughness = texture(grass_image_roughness, UV).rgb;
+	float grass_texture_roughness = texture(grass_image_roughness, UV).r;
 
 	vec3 sand_texture_ao = texture(sand_image_ao, UV).rgb;
 	vec3 sand_texture_colour = texture(sand_image_colour, UV).rgb;
@@ -104,4 +114,12 @@ void fragment() {
 	vec3 snow_texture_normal = texture(snow_image_normal, UV).rgb;
 	vec3 snow_texture_roughness = texture(snow_image_roughness, UV).rgb;
 	//#endregion
+	
+	if (vert_height < grass_height){
+		ALBEDO = vec3(0.3, 0.5, 0.3);
+	} else if (vert_height < rock_height){
+		ALBEDO = vec3(0.5, 0.5, 0.5);
+	} else {
+		ALBEDO = vec3(0.9, 0.8, 0.9);
+	};
 }
