@@ -1,7 +1,7 @@
 shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, depth_test_default, cull_back, diffuse_lambert, specular_schlick_ggx;
 
-//#region uniforms
+//#region Uniforms
 group_uniforms TerrainGen;
 uniform float u;
 uniform float v;
@@ -18,7 +18,7 @@ uniform float rock_height;
 uniform float snow_height;
 uniform float biome_blend: hint_range(0.0, 1.0) = 0.5;
 
-//#region Textures
+//#region Texture Uniforms
 group_uniforms Textures;
 
 //#region GrassTexture
@@ -84,7 +84,7 @@ void vertex() {
 
 	VERTEX += vertex_offset;
 	vert_height = VERTEX.y;
-	NORMAL = terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v)));
+	NORMAL = normalize(terrain_normal_basis * unpack_normalmap(texture(normalmap, vec2(heightmap_u, heightmap_v))));
 }
 
 void fragment() {

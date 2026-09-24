@@ -6,7 +6,6 @@ extends Node3D
 
 @onready var mesh: MeshInstance3D = $"../Mesh"
 @onready var material := mesh.get_surface_override_material(0) as ShaderMaterial
-var heightmap_tex: NoiseTexture2D
 var heightmap_img: Image
 var img_width: int
 var img_depth: int
@@ -25,9 +24,14 @@ func _ready():
 	player = $"../../../EntityRoot/Player"
 	while material.get_shader_parameter("heightmap") == null:
 		await get_tree().process_frame
-	heightmap_tex = material.get_shader_parameter("heightmap") as NoiseTexture2D
-	while heightmap_tex.get_image() == null:
-		await get_tree().process_frame
+
+	var heightmap_tex := material.get_shader_parameter("heightmap") as Texture2D
+
+	if heightmap_tex is NoiseTexture2D:
+		var test_img = heightmap_tex.get_image()
+		if test_img == null or test_img.is_empty():
+			await heightmap_tex.changed
+		
 	heightmap_img = heightmap_tex.get_image()
 	img_width = heightmap_img.get_width()
 	img_depth = heightmap_img.get_height()
