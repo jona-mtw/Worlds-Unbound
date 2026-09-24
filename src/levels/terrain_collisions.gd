@@ -1,7 +1,7 @@
 @tool
 extends Node3D
 
-@export var collision_size := 200.0
+@export var collision_size := 500.0
 
 
 @onready var mesh: MeshInstance3D = $"../Mesh"

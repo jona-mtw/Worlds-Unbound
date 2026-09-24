@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://dykimnfp04xn8"]
 
-[ext_resource type="Texture2D" uid="uid://bxkxog02e51pf" path="res://assets/art/renders/main-menu.png" id="1_2hyyg"]
 [ext_resource type="Script" uid="uid://c5davwv31cfg1" path="res://src/ui/main_menu/main_menu.gd" id="1_osdni"]
+[ext_resource type="Texture2D" uid="uid://c03vbdxn4jgf0" path="res://assets/art/renders/main_menu_bg.png" id="2_3oi2e"]
 [ext_resource type="Theme" uid="uid://bsm4qh1o5r875" path="res://src/ui/theme/global_theme.tres" id="2_4ux21"]
 [ext_resource type="PackedScene" uid="uid://d0s51w4dkd70s" path="res://src/ui/settings_menu/settings_menu.tscn" id="4_3oi2e"]
 
@@ -17,7 +17,7 @@ script = ExtResource("1_osdni")
 [node name="MainMenuBackground" type="Sprite2D" parent="."]
 position = Vector2(965.99994, 546)
 scale = Vector2(1.0109375, 1.0092592)
-texture = ExtResource("1_2hyyg")
+texture = ExtResource("2_3oi2e")
 
 [node name="SettingsMenu" parent="." instance=ExtResource("4_3oi2e")]
 layout_mode = 1

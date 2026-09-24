@@ -1,7 +1,7 @@
 extends MeshInstance3D
 
 @onready var player: CharacterBody3D = $"../../../EntityRoot/Player"
-var snap_step := 20
+var snap_step := 16
 var player_pos: Vector3
 var timer := Timer.new()
 
