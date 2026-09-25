@@ -1,4 +1,4 @@
-# **Celestial Journeys**
+# **Worlds Unbound**
 
 Eventually will become a game where you can explore a procedurally generated universe in your spacecraft, land on planets, orbit around stars, and record your journey every step of the way if you so wish by taking photos and putting them in albums.
 
